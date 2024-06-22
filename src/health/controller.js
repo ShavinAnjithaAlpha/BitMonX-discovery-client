@@ -8,6 +8,7 @@ function fetch_health(req, res) {
     .setStatus('OK')
     .build();
 
+  res.setHeader('Content-Type', 'application/json');
   res.send(health.toJSON());
   res.end();
 }
