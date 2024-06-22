@@ -4,8 +4,12 @@
   "description": "Client Library for BitMonX Disocvery Server",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon test/app.js"
   },
   "author": "Shavin Anjitha",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "express": "^4.19.2"
+  }
 }

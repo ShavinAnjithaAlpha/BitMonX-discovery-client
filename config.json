@@ -1,0 +1,27 @@
+{
+  "discovery": {
+    "server": {
+      "host": "localhost",
+      "port": 8765
+    },
+    "meta": {
+      "max_attempts": 3,
+      "retry_interval": 1000
+    }
+  },
+  "service": {
+    "name": "test-service",
+    "instance_name": "test-service-1",
+    "mapping": "/api/v1/products",
+    "host": "localhost",
+    "port": 8080,
+    "health_check_url": "http://localhost:8080/health",
+    "health_check_interval": 10000,
+    "timeout": 5000,
+    "metadata": {
+      "protocol": "http",
+      "version": "1.0.0",
+      "environment": "dev"
+    }
+  }
+}
