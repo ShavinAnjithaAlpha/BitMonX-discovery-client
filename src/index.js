@@ -1,3 +1,4 @@
+const sendHeartBeat = require('./discovery/heartbeat');
 const registerInDiscovery = require('./discovery/register');
 const { fetch_health } = require('./health/controller');
 require('./events/exit.event');
@@ -24,6 +25,10 @@ function initBitMonX(app) {
     discovery_port,
     max_attempts,
     retry_interval,
+    () => {
+      // initiate the heart beat signalling process
+      sendHeartBeat();
+    },
   );
 }
 

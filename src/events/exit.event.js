@@ -21,5 +21,6 @@ process.on('SIGTERM', () => {
 // Catch uncaught exceptions
 process.on('uncaughtException', (error) => {
   deregister(getServiceId(), getInstanceId());
-  //   process.exit(1); // Exit with a failure code
+  console.error('Uncaught exception:', error);
+  process.exit(1); // Exit with a failure code
 });

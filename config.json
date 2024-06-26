@@ -18,6 +18,9 @@
     "health_check_url": "/bitmonx/health",
     "health_check_interval": 3000,
     "timeout": 5000,
+    "heartbeat": {
+      "interval": 10000
+    },
     "metadata": {
       "protocol": "http",
       "version": "1.0.0",

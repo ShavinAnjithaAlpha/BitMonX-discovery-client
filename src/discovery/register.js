@@ -1,5 +1,4 @@
 const { setServiceId, setInstanceId } = require('../instance.details');
-const sendHeartBeat = require('./heartbeat');
 
 function registerInDiscovery(
   config,
@@ -7,6 +6,7 @@ function registerInDiscovery(
   discovery_port,
   max_attempts,
   retry_interval,
+  callback,
   attempts = 0,
 ) {
   // register the service with the discovery server
@@ -25,8 +25,8 @@ function registerInDiscovery(
       setServiceId(json.serviceId);
       setInstanceId(json.instanceId);
 
-      // initiate the heartbeat signalling process
-      sendHeartBeat();
+      // call the callback function
+      callback();
       return;
     })
     .catch((err) => {

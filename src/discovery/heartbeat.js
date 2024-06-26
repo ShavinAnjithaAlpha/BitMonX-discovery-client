@@ -1,7 +1,30 @@
+const fetch = require('node-fetch');
 const { getServiceId, getInstanceId } = require('../instance.details');
 const registerInDiscovery = require('./register');
 
 const DEFAULT_HEARTBEAT_INTERVAL = 10000;
+
+// heartbeat function with retry attepmts
+async function heartBeatWithRetry(url, retries = 3) {
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      timeout: 1000,
+    });
+
+    if (!response.ok) throw new Error(`HTTP error: status: ${response.status}`);
+    return await response.json();
+  } catch (err) {
+    if (retries > 0) {
+      return heartBeatWithRetry(url, retries - 1);
+    } else {
+      throw err;
+    }
+  }
+}
 
 function sendHeartBeat() {
   // get the heratbeat interval from the configurations
@@ -16,13 +39,9 @@ function sendHeartBeat() {
 
   // create a periodic tasks that can send the heartbeat signal to the discovery server
   const heartbeatTask = setInterval(() => {
-    fetch(discovery_url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => {
+    // send the heartbeat signal through the REST api of the discovery server as a POST request
+    heartBeatWithRetry(discovery_url)
+      .then((data) => {
         console.log('[HEARTBEAT] Sending heartbeat to the discovery server');
       })
       .catch((err) => {
@@ -33,6 +52,10 @@ function sendHeartBeat() {
           discovery_port,
           config.discovery.meta.max_attempts,
           config.discovery.meta.retry_interval,
+          () => {
+            // initiate the heart beat signalling process
+            sendHeartBeat();
+          },
         );
         // clear the heartbeat task
         clearInterval(heartbeatTask);
