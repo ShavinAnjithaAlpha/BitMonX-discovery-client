@@ -31,7 +31,9 @@ function registerInDiscovery(
     })
     .catch((err) => {
       const timeout = setTimeout(() => {
-        console.log('Retrying to register the service...');
+        console.log(
+          `[ATTEMPT ${attempts}] Retrying to register the service...`,
+        );
         attempts += 1;
         if (attempts > max_attempts) {
           console.error('Could not register the service');
@@ -45,6 +47,7 @@ function registerInDiscovery(
           discovery_port,
           max_attempts,
           retry_interval,
+          callback,
           attempts,
         );
 

@@ -14,7 +14,7 @@
     "instance_name": "test-service-1",
     "mapping": "/api/v1/products",
     "host": "localhost",
-    "port": 8080,
+    "port": 9080,
     "health_check_url": "/bitmonx/health",
     "health_check_interval": 3000,
     "timeout": 5000,
