@@ -4,6 +4,7 @@ function fetch_health(req, res) {
   const health = ServiceHealth.builder()
     .fetchCpuUsage()
     .fetchMemoryUsage()
+    .fetchDiskUsage()
     .fetchUpTime()
     .setStatus('OK')
     .build();

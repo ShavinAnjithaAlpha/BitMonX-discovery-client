@@ -5,7 +5,7 @@
       "port": 8765
     },
     "meta": {
-      "max_attempts": 3,
+      "max_attempts": 10,
       "retry_interval": 1000
     }
   },
