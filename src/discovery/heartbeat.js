@@ -41,9 +41,7 @@ function sendHeartBeat() {
   const heartbeatTask = setInterval(() => {
     // send the heartbeat signal through the REST api of the discovery server as a POST request
     heartBeatWithRetry(discovery_url)
-      .then((data) => {
-        console.log('[HEARTBEAT] Sending heartbeat to the discovery server');
-      })
+      .then((data) => {})
       .catch((err) => {
         // try to reregistered in the discovery server if available
         registerInDiscovery(
