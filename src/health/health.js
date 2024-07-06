@@ -48,8 +48,11 @@ module.exports = class ServiceHealth {
   fetchMemoryUsage() {
     this.memory_usage = process.memoryUsage();
     this.memory_usage.total = os.totalmem();
+    this.memory_usage.available = os.freemem();
     this.memory_usage.usage =
-      (this.memory_usage.heapUsed / this.memory_usage.total) * 100;
+      ((this.memory_usage.total - this.memory_usage.available) /
+        this.memory_usage.total) *
+      100;
     return this;
   }
 
