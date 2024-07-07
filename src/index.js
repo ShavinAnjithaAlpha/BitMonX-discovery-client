@@ -62,7 +62,7 @@ class BitMonX extends EventEmitter {
     this.config = require('./read_config')(this.logger);
     const defaultConfig = require('./default_config');
     // merge the config file's configuration with the default configuration
-    this.config = _.merge({}, defaultConfig, this.config);
+    this.config = _.merge({}, defaultConfig, config, this.config);
     // validate the configuration
     this.validateConfig(this.config);
     // request middleware
