@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "Client Library for BitMonX Disocvery Server",
   "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ShavinAnjithaAlpha/BitMonX-discovery-client"
+  },
+  "displayName": "BitMonX Discovery Client",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon test/app.js",
