@@ -35,4 +35,4 @@ function readConfig(logger = null) {
   return JSON.parse(config);
 }
 
-module.exports = readConfig();
+module.exports = (logger = null) => readConfig(logger);

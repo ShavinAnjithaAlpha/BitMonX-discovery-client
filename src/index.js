@@ -63,6 +63,8 @@ class BitMonX extends EventEmitter {
     const defaultConfig = require('./default_config');
     // merge the config file's configuration with the default configuration
     this.config = _.merge({}, defaultConfig, this.config);
+    // validate the configuration
+    this.validateConfig(this.config);
     // request middleware
     this.requestMiddleware =
       config.requestMiddleware ||
@@ -95,7 +97,31 @@ class BitMonX extends EventEmitter {
     return null;
   }
 
-  // method to start the service // register with the discovery service and start the heart beat mechanism
+  validateConfig(config) {
+    function validate(namespace, key) {
+      if (!config[namespace][key]) {
+        throw new Error(`Missing "${namespace}.${key}" in the configuration`);
+      }
+    }
+
+    validate('discovery', 'server');
+    validate('service', 'name');
+    validate('service', 'instance_name');
+    validate('service', 'mapping');
+    validate('service', 'host');
+    validate('service', 'port');
+    validate('service', 'metadata');
+
+    if (typeof config.requestMiddleware !== 'function') {
+      throw new Error('requestMiddleware must be a function');
+    }
+  }
+
+  /*
+   * Method to start the service
+   * @param {Object} app - The express app object
+   * @param {Function} callback - The callback function to call after the service is started  (optional)
+   */
   init(app, callback = default_callback) {
     // first register with the discovery service
     // and then start the heartbeat process
@@ -150,7 +176,10 @@ class BitMonX extends EventEmitter {
     );
   }
 
-  // method to stop the service // deregister with the discovery service and stop the heart beat mechanism
+  /*
+   * Method to stop the service
+   * @param {Function} callback - The callback function to call after the service is stopped
+   */
   stop(callback = default_callback) {
     // first stop the heartbeat process with the discovery server
     clearInterval(this.heartBeatInterval);
@@ -407,6 +436,109 @@ class BitMonX extends EventEmitter {
         }
       },
     );
+  }
+
+  /*
+   * Method to get the service instance by instance name
+   * @param {string} instanceName - The instance name of the service
+   * @returns {Object} - The service instance object
+   * @throws {RangeError} - If the instance name is not provided
+   * @throws {Error} - If the instance is not found
+   * @example
+   * const instance = bitmonx.getInstanceByInstanceName('instance_name');
+   * console.log(instance);
+   * // { instance_name: 'instance_name', host: 'localhost', port: 3000, ... }
+   */
+  getInstanceByInstanceName(instanceName) {
+    if (!instanceName) {
+      throw new RangeError('Unable to query instance without instance name');
+    }
+
+    if (!this.registry) {
+      this.logger.warn('[bitmonx] local registry is empty. Fetching registry');
+      return null;
+    }
+
+    let instance_ = null;
+    for (const serviceName in this.registry) {
+      const service = this.registry[serviceName];
+      if (!service.instances) {
+        continue;
+      }
+
+      for (const instance of service.instances) {
+        if (instance.instance_name === instanceName) {
+          return {
+            ...instance,
+            name: service.name,
+            mapping: service.mapping,
+            version: service.version,
+            protocol: service.protocol,
+          };
+        }
+      }
+    }
+  }
+
+  /*
+   * Method to get the service instance by service name
+   * @param {string} serviceName - The service name of the service
+   * @returns {Object} - The service instance object
+   * @throws {RangeError} - If the service name is not provided
+   * @throws {Error} - If the service is not found
+   * @example
+   * const instances = bitmonx.getInstancesByServiceName('service_name');
+   * console.log(instances);
+   * // [{ instance_name: 'instance_name', host: 'localhost', port: 3000, ... }]
+   * */
+  getInstancesByServiceName(serviceName) {
+    if (!serviceName) {
+      throw new RangeError('Unable to query instance without service name');
+    }
+
+    if (!this.registry) {
+      this.logger.warn('[bitmonx] local registry is empty. Fetching registry');
+      return null;
+    }
+
+    const instances = this.registry[serviceName];
+    if (!instances) {
+      this.logger.warn(
+        `[bitmonx] No instances found for service name: ${serviceName}`,
+      );
+      return null;
+    }
+
+    return instances;
+  }
+
+  /*
+   * Method to get the service instance by service name
+   * @param {string} serviceName - The service name of the service
+   * @returns {Object} - The service instance object
+   * @throws {RangeError} - If the service name is not provided
+   * @throws {Error} - If the service is not found
+   * @example
+   * const instances = bitmonx.getInstancesByServiceName('service_name');
+   * console.log(instances);
+   * // [{ instance_name: 'instance_name', host: 'localhost', port: 3000, ... }]
+   * */
+  getServiceByMapping(mapping) {
+    if (!serviceName) {
+      throw new RangeError('Unable to query instance without service name');
+    }
+
+    if (!this.registry) {
+      this.logger.warn('[bitmonx] local registry is empty. Fetching registry');
+      return null;
+    }
+
+    for (const serviceName in this.registry) {
+      const service = this.registry[serviceName];
+      if (service.mapping === mapping) {
+        return service;
+      }
+    }
   }
 
   /*

@@ -24,7 +24,7 @@ bitmonx.on('registered', (serviceId, instanceId) => {
 
 bitmonx.on('registryFetched', (data) => {
   console.log('registry fetched');
-  console.log(data);
+  console.log(bitmonx.getInstanceByInstanceName('test-service-1'));
 });
 
 app.get('/api/v1/products', (req, res) => {
@@ -49,6 +49,6 @@ function randomStringGen() {
   return str;
 }
 
-app.listen(9080, () => {
-  console.log('Server is running on port 9080');
+app.listen(8088, () => {
+  console.log('Server is running on port 8088');
 });
