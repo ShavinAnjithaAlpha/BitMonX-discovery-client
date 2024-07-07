@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events');
-const { waterfall } = require('async');
+const { waterfall, series } = require('async');
 const sendHeartBeat = require('./discovery/heartbeat');
 const registerInDiscovery = require('./discovery/register');
 const { fetch_health } = require('./health/controller');
@@ -49,6 +49,8 @@ function initBitMonX(app) {
   );
 }
 
+const default_callback = () => {};
+
 class BitMonX extends EventEmitter {
   constructor(config = {}) {
     super();
@@ -66,13 +68,47 @@ class BitMonX extends EventEmitter {
   }
 
   // method to start the service // register with the discovery service and start the heart beat mechanism
-  init() {}
+  init(callback = default_callback) {
+    // first register with the discovery service
+    // and then start the heartbeat process
+    series(
+      [
+        // register in the duscovery service first
+        (callback) => {
+          this.registerInDiscovery((err) => {
+            if (err) {
+              return callback(err);
+            }
+            // start the heartbeat process
+            callback(null);
+          });
+        },
+
+        // start the heartbeat process
+        (callback) => {
+          this.startHeartBeatProcess();
+          callback(null);
+        },
+      ],
+      (err, ...rest) => {
+        if (err) {
+          this.logger.error('[bitmonx] Error starting the bitmonx client', err);
+          return;
+        }
+
+        this.logger.info('[bitmonx] bitmonx client started successfully');
+        this.emit('started');
+        // call the callback
+        callback(err, ...rest);
+      },
+    );
+  }
 
   // method to stop the service // deregister with the discovery service and stop the heart beat mechanism
   stop() {}
 
   // register with the discovery server
-  registerInDiscovery(callback) {
+  registerInDiscovery(callback = default_callback) {
     const registerTimeOut = setTimeout(() => {
       this.logger.warn(
         "Seems like it's take unusual time to register with the bitmonx discovery server." +
@@ -105,6 +141,7 @@ class BitMonX extends EventEmitter {
           this.instanceId = this.instanceId;
           // emit the registered event with service and instance id of the app
           this.emit('registered', response.serviceId, response.instanceId);
+          return callback(null);
         } else if (err) {
           // error happens while registering in the discovery server
           this.logger.error(
@@ -125,7 +162,48 @@ class BitMonX extends EventEmitter {
   reregisterInDiscovery() {}
 
   // start heartbeat process
-  startHeartBeatProcess() {}
+  startHeartBeatProcess() {
+    const host = this.config.discovery.server.host;
+    const port = this.config.discovery.server.port;
+    const protocol = this.config.discovery.server.protocol || 'http';
+
+    const baseUrl = `${protocol}://${host}:${port}`;
+    const url = `${baseUrl}/bitmonx/heartbeat?serviceId=${this.serviceId}&instanceId=${this.instanceId}`;
+
+    // start the heartbeat process with tht server
+    this.heartBeatInterval = setInterval(() => {
+      this._heartBeat(url, (err, response) => {});
+    }, this.config.service.heartbeat.interval);
+  }
+
+  _heartBeat(url, callback = default_callback) {
+    // make the heartbeat request to the discovery server
+    this.request(
+      url,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+      (err, response, statusCode) => {
+        if (err || statusCode >= 500) {
+          this.logger.error(
+            `[bitmonx] Error making heartbeat with the discovery server`,
+            err,
+          );
+          return callback(err);
+        }
+
+        // heartbeat is successfull
+        this.logger.debug('[bitmonx] heartbeat with the discovery server');
+        // emit the heartbeat event
+        this.emit('heartbeat');
+        // call the callback function
+        callback(null, response);
+      },
+    );
+  }
 
   startFetchRegistryProcess() {}
 
@@ -140,7 +218,13 @@ class BitMonX extends EventEmitter {
    * @param {number} retryAttemp - The number of times to retry the request
    * @returns {void}
    */
-  request(endpoint, options, callback, json = true, retryAttemp = 0) {
+  request(
+    endpoint,
+    options,
+    callback = default_callback,
+    json = true,
+    retryAttemp = 0,
+  ) {
     // make a request to the discovery server
     waterfall(
       [
