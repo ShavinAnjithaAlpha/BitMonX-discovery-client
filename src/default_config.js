@@ -12,8 +12,8 @@ module.exports = {
   },
   service: {
     health_check_url: '/bitmonx/health',
-    health_check_interval: 5000,
-    timeout: 5000,
+    health_check_interval: 30000,
+    timeout: 30000,
     heartbeat: {
       interval: 30000,
     },

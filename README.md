@@ -99,14 +99,101 @@ const serviceId = bitmonx.getServiceId();
 const instanceId = bitmonx.getInstanceId();
 ```
 
+### Providing Custom Request Middleware
+
+The bitmonx client exposes the ability to modify the outgoint request options object prior to the request being made for BitMonX dicovery server. This will be called for every request made to the discovery server. If the middleware returns anything other than an object, the discovery request will immediately fail and perform a retry in background if configured.
+
+```javascript
+const bitmonx = new BitMonX({
+  requestMiddleware: (options, callback) => {
+    // Modify the options object
+    options.headers['Authorization'] = ' Bearer ' + 'token';
+    // Call the callback with the modified options object
+    callback(options);
+});
+```
+
+### Querying the local cache for services
+
+The bitmonx client caches the services that are registered with the discovery server. The cache will be invalidate after every fresh registry fetching from the discovery server. You can query the cache to get the services that are registered with the discovery server.
+
+You can query the instances by their registerd instance name or service name.
+It will return an object containing the service information.
+
+```javascript
+const instance = bitmonx.getInstanceByInstanceName('app_name');
+const instances = bitmonx.getInstancesByServiceName('service_name');
+```
+
+Also, you can query the cache using the service mapping. It will return an object containing the service information.
+
+```javascript
+const instances = bitmonx.getServiceByMapping('/api/v1/mapping');
+```
+
+## Advanced Configuration Options
+
+| Option                                   | Description                                                                          | Default           |
+| ---------------------------------------- | ------------------------------------------------------------------------------------ | ----------------- |
+| `requestMiddleware`                      | The middleware function to modify the request options object                         | `null`            |
+| `discovery.server.host`                  | The host of the discovery server                                                     | `NA`              |
+| `discovery.server.port`                  | The port of the discovery server                                                     | `NA`              |
+| `discovery.server.protocol`              | The protocol of the discovery server                                                 | `http`            |
+| `discovery.meta.max_attempts`            | The maximum number of attempts to retry the request                                  | `10`              |
+| `discovery.meta.retry_interval`          | The interval between retries in milliseconds                                         | `1000`            |
+| `discovery.meta.fetch_registry_interval` | The interval between fetching the registry from the discovery server in milliseconds | `30000`           |
+| `discovery.meta.fetch_regsitry_filter`   | The filter to fetch the registry from the discovery server                           | `ALL`             |
+| `service.name`                           | The name of the service                                                              | `NA`              |
+| `service.instance_name`                  | The name of the instance                                                             | `NA`              |
+| `service.mapping`                        | The mapping of the service                                                           | `NA`              |
+| `service.host`                           | The host of the service                                                              | `NA`              |
+| `service.port`                           | The port of the service                                                              | `NA`              |
+| `service.health_check_url`               | The health check URL of the service                                                  | `/bitmonx/health` |
+| `service.health_check_interval`          | The interval between health checks in milliseconds                                   | `30000`           |
+| `service.timeout`                        | The timeout for the health check in milliseconds                                     | `30000`           |
+| `service.heartbeat.interval`             | The interval between heartbeats in milliseconds                                      | `30000`           |
+| `service.metadata.protocol`              | The protocol of the service                                                          | `http`            |
+| `service.metadata.version`               | The version of the service                                                           | `1.0.0`           |
+| `service.metadata.environment`           | The environment of the service                                                       | `dev`             |
+
+## Events
+
+BitMonX client is an instance of EventEmitter. It emits the following events:
+
+| Event Name        | Description                                                                     |
+| ----------------- | ------------------------------------------------------------------------------- |
+| `started`         | Emitted when the service is started and the client is initialized               |
+| `registered`      | Emitted when the service is successfully registered with the discovery server   |
+| `deregistered`    | Emitted when the service is successfully deregistered with the discovery server |
+| `heartbeat`       | Emitted when the service sends a heartbeat to the discovery server              |
+| `registryFetched` | Emitted when the service fetches the registry from the discovery server         |
+
 ## Contributors
 
 - [Shavin Anjitha](http://shavinanjitha.me)
 
 ## Acknowledgement
 
+This project is developed as a part of the BitMonX project.
+
+This project would not have been possible without the support from:
+
+- The developers of _async_ and _lodash_, which are used in this project.
+
+This project is isnpired from the [Eureka Client](https://github.com/Netflix/eureka), which is a Java client for the Eureka server which is used to register services with the Eureka server.
+
 ## Changelog
+
+See the [CHANGELOG](CHANGELOG.md) file for details.
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+```
+
+```
+
+```
+
+```
