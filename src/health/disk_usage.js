@@ -69,7 +69,6 @@ function getDiskUsage(callback) {
         callback(error, null);
         return;
       }
-      console.log(`Disk Usage:\n${stdout}`);
 
       // parse the stdout as a JSON object
       let lines = stdout.split('\n');

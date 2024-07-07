@@ -17,16 +17,16 @@ const CONFIG_FILE_NAME = 'bitmonx.config.json';
  * exit the process if the config file is not found
  * @returns {Object} The parsed JSON object from the config file
  */
-function readConfig() {
+function readConfig(logger = null) {
   const cwd = process.cwd();
 
   const configPath = path.join(cwd, CONFIG_FILE_NAME);
   // check if the config file exists
   if (!fs.existsSync(configPath)) {
-    console.log(
-      '[CONFIG] Config file name bitmonx.config.json not found. Exiting...',
-    );
-    process.exit(1);
+    if (logger) {
+      logger.error(`[bitmonx] Config file not found at ${configPath}`);
+    }
+    throw new Error(`Config file not found at ${configPath}`);
   }
 
   // read the config file

@@ -11,7 +11,7 @@ export default [
   pluginJs.configs.recommended,
   {
     rules: {
-      'no-console': 'on',
+      'no-console': 'warn',
       'no-unused-vars': 'off',
       'no-undef': 'off',
       'no-constant-condition': 'off',

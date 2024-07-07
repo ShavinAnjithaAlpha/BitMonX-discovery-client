@@ -1,4 +1,4 @@
-1 - REdesign as a class                                         OK
+1 - Redesign as a class                                         OK
 2 - implment start and stop method                              OK
     start - register with server and start heartbeat            OK
     stop - stop heartbeat and unregister with server            OK

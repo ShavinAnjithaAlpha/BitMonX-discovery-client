@@ -1,4 +1,4 @@
-const { initBitMonX, BitMonX } = require('../src/index');
+const BitMonX = require('../src/index');
 const express = require('express');
 const Logger = require('../src/logger');
 

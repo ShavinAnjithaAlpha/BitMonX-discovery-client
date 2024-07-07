@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon test/app.js",
-    "lint": "npx eslint ."
+    "lint": "npx eslint src"
   },
   "author": "Shavin Anjitha",
   "license": "ISC",

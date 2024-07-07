@@ -59,7 +59,7 @@ class BitMonX extends EventEmitter {
     this.logger.debug('[bitmonx] start the bitmonx client');
 
     // read the config from the config json file
-    this.config = require('./read_config');
+    this.config = require('./read_config')(this.logger);
     const defaultConfig = require('./default_config');
     // merge the config file's configuration with the default configuration
     this.config = _.merge({}, defaultConfig, this.config);
@@ -505,4 +505,4 @@ class BitMonX extends EventEmitter {
   }
 }
 
-module.exports = { initBitMonX, BitMonX };
+module.exports = BitMonX;
