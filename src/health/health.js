@@ -1,7 +1,42 @@
+/**
+ * @description This class fetches the health of the service such as cpu usage, memory usage, disk usage, uptime and status of the service and then send the health as a JSON response to the client, when the client requests for the health of the service.
+ * @requires os
+ * @requires getDiskUsage
+ * @exports ServiceHealth
+ * @class
+ * @example
+ * const health = ServiceHealth.builder()
+ * .fetchCpuUsage()
+ * .fetchMemoryUsage()
+ * .fetchDiskUsage()
+ * .fetchUpTime()
+ * .setStatus('OK')
+ * .build();
+ * console.log(health.toJSON());
+ * @author Shavin Anjitha
+ */
+
 const { getDiskUsage } = require('./disk_usage');
 const os = require('os');
 
 module.exports = class ServiceHealth {
+  /**
+   * @description This class fetches the health of the service such as cpu usage, memory usage, disk usage, uptime and status of the service and then send the health as a JSON response to the client, when the client requests for the health of the service.
+   * @requires os
+   * @requires getDiskUsage
+   * @exports ServiceHealth
+   * @class
+   * @example
+   * const health = ServiceHealth.builder()
+   *  .fetchCpuUsage()
+   * .fetchMemoryUsage()
+   * .fetchDiskUsage()
+   * .fetchUpTime()
+   * .setStatus('OK')
+   * .build();
+   * console.log(health.toJSON());
+   **/
+
   // properties
   cpu_usage;
   memory_usage;

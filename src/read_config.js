@@ -1,12 +1,31 @@
-const path = require("path");
-const fs = require("fs");
+/**
+ * Read the config file from the current working directory
+ * and return the parsed JSON object
+ * @author Shavin Anjitha
+ */
 
+const path = require('path');
+const fs = require('fs');
+
+const CONFIG_FILE_NAME = 'bitmonx.config.json';
+
+/**
+ * Read the config file from the current working directory
+ *
+ * BitMonX discovery client configure itself and find the discovery server using these configurations in the config file.
+ *
+ * exit the process if the config file is not found
+ * @returns {Object} The parsed JSON object from the config file
+ */
 function readConfig() {
   const cwd = process.cwd();
 
-  const configPath = path.join(cwd, "config.json");
+  const configPath = path.join(cwd, CONFIG_FILE_NAME);
   // check if the config file exists
   if (!fs.existsSync(configPath)) {
+    console.log(
+      '[CONFIG] Config file name bitmonx.config.json not found. Exiting...',
+    );
     process.exit(1);
   }
 

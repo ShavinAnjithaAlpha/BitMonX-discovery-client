@@ -4,23 +4,23 @@ const { getServiceId, getInstanceId } = require('../instance.details');
 // Listen for the exit event
 process.on('exit', (code) => {
   deregister(getServiceId(), getInstanceId());
+  process.exit(0); // Exit with a success code
 });
 
 // Listen for SIGINT (e.g., Ctrl+C in the terminal)
 process.on('SIGINT', () => {
   deregister(getServiceId(), getInstanceId());
-  //   process.exit(1); // Exit with a failure code
+  process.exit(1); // Exit with a failure code
 });
 
 // Listen for SIGTERM (sent from system)
 process.on('SIGTERM', () => {
   deregister(getServiceId(), getInstanceId());
-  //   process.exit(1);
+  process.exit(1);
 });
 
 // Catch uncaught exceptions
 process.on('uncaughtException', (error) => {
   deregister(getServiceId(), getInstanceId());
-  console.error('Uncaught exception:', error);
   process.exit(1); // Exit with a failure code
 });

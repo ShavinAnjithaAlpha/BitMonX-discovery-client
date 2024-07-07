@@ -1,8 +1,35 @@
+/**
+ * @file disk_usage.js
+ * @description This file contains the function to get the disk usage details of the system.
+ * @exports getDiskUsage
+ * @author Shavin Anjitha
+ * @requires exec
+ * @requires os
+ * @requires path
+ */
+
 const { exec } = require('child_process');
 const os = require('os');
 const path = require('path');
-// const disk = require('diskusage');
 
+/**
+ * Get the disk usage details of the system and return it as a JSON object to the callback function provided as an argument to the function.
+ * @param {Function} callback - The callback function that handles the disk usage details
+ * @returns {void}
+ * @example
+ * const { getDiskUsage } = require('./disk_usage');
+ * getDiskUsage((error, diskInfo) => {
+ *  if (error) {
+ *   console.error(error);
+ * }
+ * console.log(diskInfo);
+ * });
+ * @description This function gets the disk usage details of the system and returns it as a JSON object to the callback function provided as an argument to the function.
+ * @exports getDiskUsage
+ * @requires exec
+ * @requires os
+ * @requires path
+ */
 function getDiskUsage(callback) {
   const platform = os.platform();
 
@@ -65,22 +92,6 @@ function getDiskUsage(callback) {
     });
   }
 }
-
-// function getDiskUsageWithPackage() {
-//   const platform = os.platform();
-//   const diskPath = platform === 'win32' ? 'C:' : path.parse(__dirname).root;
-
-//   disk.check(diskPath, (err, info) => {
-//     if (err) {
-//       console.error(err);
-//     } else {
-//       console.log(`Disk Usage for ${diskPath}:`);
-//       console.log(`Total: ${(info.total / 1024 / 1024 / 1024).toFixed(2)} GB`);
-//       console.log(`Free: ${(info.free / 1024 / 1024 / 1024).toFixed(2)} GB`);
-//       console.log(`Used: ${(info.used / 1024 / 1024 / 1024).toFixed(2)} GB`);
-//     }
-//   });
-// }
 
 module.exports = {
   getDiskUsage,

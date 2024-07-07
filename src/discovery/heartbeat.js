@@ -1,10 +1,21 @@
+/**
+ * @fileoverview This file contains the implementation of the heartbeat signal to the discovery server
+ * @author Shavin Anjitha
+ */
+
 const fetch = require('node-fetch');
 const { getServiceId, getInstanceId } = require('../instance.details');
 const registerInDiscovery = require('./register');
 
 const DEFAULT_HEARTBEAT_INTERVAL = 10000;
 
-// heartbeat function with retry attepmts
+/**
+ * Send a heartbeat signal to the discovery server
+ * @param {string} url - The URL of the discovery server
+ * @param {number} retries - The number of retries to attempt
+ * @returns {Promise<Object>} The response from the discovery server
+ * @throws {Error} If the HTTP request fails
+ */
 async function heartBeatWithRetry(url, retries = 3) {
   try {
     const response = await fetch(url, {
@@ -26,6 +37,12 @@ async function heartBeatWithRetry(url, retries = 3) {
   }
 }
 
+/**
+ * Send a heartbeat signal to the discovery server
+ * @description This function sends a heartbeat signal to the discovery server
+ * @returns {void}
+ * @throws {Error} If the HTTP request fails
+ */
 function sendHeartBeat() {
   // get the heratbeat interval from the configurations
   const config = require('../read_config');

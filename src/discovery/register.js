@@ -1,5 +1,29 @@
 const { setServiceId, setInstanceId } = require('../instance.details');
 
+/**
+ * Register a service with the discovery server
+ * @param {Object} config - The configuration object
+ * @param {string} discovery_host - The host of the discovery server
+ * @param {number} discovery_port - The port of the discovery server
+ * @param {number} max_attempts - The maximum number of attempts to register
+ * @param {number} retry_interval - The interval between retries
+ * @param {Function} callback - The callback function
+ * @param {number} attempts - The number of attempts made
+ * @returns {void}
+ * @throws {Error} If the HTTP request fails
+ * @example
+ * registerInDiscovery(
+ *  config,
+ * discovery_host,
+ * discovery_port,
+ * max_attempts,
+ * retry_interval,
+ * callback,
+ * attempts,
+ * );
+ * @description This function registers a service with the discovery server.
+ * @exports registerInDiscovery
+ */
 function registerInDiscovery(
   config,
   discovery_host,
