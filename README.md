@@ -1,4 +1,4 @@
-# BotMonX Disocvery Client for Node.js
+# BitMonX Disocvery Client for Node.js
 
 A Node.js client for the BotMonX Discovery Server. This client is used to register and discover services in a microservice architecture.
 

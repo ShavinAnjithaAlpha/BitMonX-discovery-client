@@ -18,5 +18,13 @@
   },
   "dependencies": {
     "node-fetch": "^2.7.0"
-  }
+  },
+  "keywords": [
+    "bitmonx",
+    "discovery",
+    "client",
+    "microservices",
+    "service-discovery",
+    "nodejs"
+  ]
 }

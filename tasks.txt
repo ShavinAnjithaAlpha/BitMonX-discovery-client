@@ -1,0 +1,14 @@
+1 - REdesign as a class
+2 - implment start and stop method
+    start - register with server and start heartbeat
+    stop - stop heartbeat and unregister with server
+
+3 - logger 
+4 - request retry delay, retry attempts configs
+5 - heratbeat interval, registryfetch interval configs
+6 - filter UP instances
+7 - ssl supports (optional)
+
+
+8 - add events (strted, registered, deregistered, heartbeat, registryUpdates)
+
