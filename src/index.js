@@ -54,14 +54,19 @@ const default_callback = () => {};
 class BitMonX extends EventEmitter {
   constructor(config = {}) {
     super();
-
     // create a logger
     this.logger = config.logger || new Logger();
-
     this.logger.debug('[bitmonx] start the bitmonx client');
 
     // read the config from the config json file
     this.config = require('./read_config');
+
+    // request middleware
+    this.requestMiddleware =
+      config.requestMiddleware ||
+      function (options, callback) {
+        callback(options);
+      };
 
     // initialize the local service registry
     this.registry = {};
@@ -241,29 +246,33 @@ class BitMonX extends EventEmitter {
         },
 
         // perform the request to the discovery server
-        async (options, callback) => {
-          try {
-            // extract the info from the options
-            const host = this.config.discovery.server.host;
-            const port = this.config.discovery.server.port;
-            const protocol = this.config.discovery.server.protocol || 'http';
-            // generate the base url
-            const baseUrl = `${protocol}://${host}:${port}`;
-            // generate the url
-            const url = `${baseUrl}${endpoint}`;
+        (options, callback) => {
+          // extract the info from the options
+          const host = this.config.discovery.server.host;
+          const port = this.config.discovery.server.port;
+          const protocol = this.config.discovery.server.protocol || 'http';
+          // generate the base url
+          const baseUrl = `${protocol}://${host}:${port}`;
+          // generate the url
+          const url = `${baseUrl}${endpoint}`;
 
-            // now perform the request
-            const response = await fetch(url, options);
-            const statusCode = response.status;
-            if (json) {
-              const json = await response.json();
-              callback(null, json, statusCode);
-            } else {
-              callback(null, response.text(), statusCode);
-            }
-          } catch (err) {
-            callback(err, null);
-          }
+          // now perform the request
+          fetch(url, options)
+            .then((response) => {
+              const statusCode = response.status;
+              if (json) {
+                response.json().then((json) => {
+                  callback(null, json, statusCode);
+                });
+              } else {
+                response.text().then((text) => {
+                  callback(null, text, statusCode);
+                });
+              }
+            })
+            .catch((err) => {
+              callback(err);
+            });
         },
       ],
 
@@ -301,4 +310,4 @@ class BitMonX extends EventEmitter {
   }
 }
 
-module.exports = initBitMonX;
+module.exports = { initBitMonX, BitMonX };

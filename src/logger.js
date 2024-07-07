@@ -34,7 +34,7 @@ module.exports = class Logger {
 
   // abstract method to call console output stream
   _log(method, args) {
-    if (LEVELS[method] >= this_level) {
+    if (LEVELS[method === 'log' ? 'debug' : method] >= this._level) {
       /* eslint-disable no-console */
       console[method](...args);
       /* eslint-enable no-console */
@@ -42,18 +42,18 @@ module.exports = class Logger {
   }
 
   error(...args) {
-    this._log('error', args);
+    return this._log('error', args);
   }
 
   warn(...args) {
-    this._log('warn', args);
+    return this._log('warn', args);
   }
 
   info(...args) {
-    this._log('info', args);
+    return this._log('info', args);
   }
 
   debug(...args) {
-    this._log('debug', args);
+    return this._log('log', args);
   }
 };

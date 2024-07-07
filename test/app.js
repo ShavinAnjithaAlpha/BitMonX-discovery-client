@@ -1,8 +1,16 @@
-const initBitMonX = require('../src/index');
+const { initBitMonX, BitMonX } = require('../src/index');
 const express = require('express');
+const Logger = require('../src/logger');
 
 const app = express();
-initBitMonX(app);
+// initBitMonX(app);
+
+const logger = new Logger();
+logger.level('debug');
+const bitmonx = new BitMonX({
+  logger: logger,
+});
+bitmonx.init();
 
 app.get('/api/v1/products', (req, res) => {
   res.json({
