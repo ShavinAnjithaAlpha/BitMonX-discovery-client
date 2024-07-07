@@ -10,7 +10,7 @@ logger.level('debug');
 const bitmonx = new BitMonX({
   logger: logger,
 });
-bitmonx.init();
+bitmonx.init(app);
 
 app.get('/api/v1/products', (req, res) => {
   res.json({
