@@ -7,6 +7,7 @@ module.exports = {
       max_attempts: 10,
       retry_interval: 1000,
       fetch_registry_interval: 30000,
+      fetch_registry_filter: 'ALL',
     },
   },
   service: {

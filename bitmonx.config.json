@@ -8,7 +8,8 @@
     "meta": {
       "max_attempts": 10,
       "retry_interval": 1000,
-      "fetch_registry_interval": 5000
+      "fetch_registry_interval": 5000,
+      "fetch_registry_filter": "UP"
     }
   },
   "service": {

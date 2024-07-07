@@ -410,7 +410,7 @@ class BitMonX extends EventEmitter {
   fetchRegistry(callback = default_callback) {
     // make a request to the discovery server to load the registry infomation to local memory
     this.request(
-      '/bitmonx/registry',
+      `/bitmonx/registry?filter=${this.config.discovery.meta.fetch_registry_filter}`,
       {
         method: 'GET',
         headers: {
