@@ -6,11 +6,26 @@ const app = express();
 // initBitMonX(app);
 
 const logger = new Logger();
-logger.level('debug');
+logger.level('error');
 const bitmonx = new BitMonX({
   logger: logger,
 });
 bitmonx.init(app);
+
+bitmonx.on('heartbeat', () => {
+  console.log('heartbeat detected');
+});
+
+bitmonx.on('registered', (serviceId, instanceId) => {
+  console.log(
+    'registered, service ID: ' + serviceId + ', instance ID: ' + instanceId,
+  );
+});
+
+bitmonx.on('registryFetched', (data) => {
+  console.log('registry fetched');
+  console.log(data);
+});
 
 app.get('/api/v1/products', (req, res) => {
   res.json({

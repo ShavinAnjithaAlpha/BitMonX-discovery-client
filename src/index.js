@@ -118,6 +118,12 @@ class BitMonX extends EventEmitter {
           callback(null);
         },
 
+        // start the registry fetching process
+        (callback) => {
+          this.startFetchRegistryProcess();
+          callback(null);
+        },
+
         // start the health endpoint on the app
         (callback) => {
           try {
@@ -229,7 +235,8 @@ class BitMonX extends EventEmitter {
   reRegisterInDiscovery(callback = default_callback) {
     // first clear the heartbeat process
     if (this.heartBeatInterval) clearInterval(this.heartBeatInterval);
-
+    // clear the registry fecthing interval if exists
+    if (this.fetchRegistryInterval) clearInterval(this.fetchRegistryInterval);
     // then reregister in the discovery service and start heartbeat process again
     series(
       [
@@ -246,6 +253,12 @@ class BitMonX extends EventEmitter {
         // start the heartbeat process again
         (callback) => {
           this.startHeartBeatProcess();
+          callback(null);
+        },
+
+        // start the registry fetching process
+        (callback) => {
+          this.startFetchRegistryProcess();
           callback(null);
         },
       ],
@@ -269,6 +282,7 @@ class BitMonX extends EventEmitter {
   startHeartBeatProcess() {
     const url = `/bitmonx/heartbeat?serviceId=${this.serviceId}&instanceId=${this.instanceId}`;
 
+    this.logger.info('[bitmonx]: heartbeat process started');
     // start the heartbeat process with tht server
     this.heartBeatInterval = setInterval(() => {
       this._heartBeat(url, (err, response) => {});
@@ -351,11 +365,49 @@ class BitMonX extends EventEmitter {
   }
 
   startFetchRegistryProcess() {
-    this.fetchRegistryInterval = setInterval(() => {},
-    this.config.discovery.meta.fetch_registry_interval);
+    this.logger.info('[bitmonx]: registry fetching process started');
+    this.fetchRegistryInterval = setInterval(() => {
+      this.fetchRegistry((err, response) => {
+        if (err) {
+          // try to reregister with the discovery server
+          return this.reRegisterInDiscovery();
+        }
+        // emit the event
+        this.emit('registryFetched', response);
+      });
+    }, this.config.discovery.meta.fetch_registry_interval);
   }
 
-  fetchRegistry() {}
+  fetchRegistry(callback = default_callback) {
+    // make a request to the discovery server to load the registry infomation to local memory
+    this.request(
+      '/bitmonx/registry',
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+      (err, response, statusCode) => {
+        if (err || statusCode >= 500) {
+          this.logger.error(
+            `error fetching registry from the discovery server `,
+          );
+          return callback(err);
+        } else if (statusCode >= 400) {
+          this.logger.warn(
+            `invalid response while fethching registry with status code: ${statusCode} and response: ${response}`,
+          );
+          return callback(null, response);
+        } else {
+          // successfull registry fetching
+          // update the local registry cache
+          this.registry = response;
+          callback(null, response);
+        }
+      },
+    );
+  }
 
   /*
    * Method to make a request to the discovery server
