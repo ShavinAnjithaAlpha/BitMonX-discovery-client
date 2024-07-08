@@ -183,8 +183,10 @@ class BitMonX extends EventEmitter {
   stop(callback = default_callback) {
     // first stop the heartbeat process with the discovery server
     clearInterval(this.heartBeatInterval);
+    // clear the registry fetch interval
+    clearInterval(this.fetchRegistryInterval);
     // deregister with the discovery server
-    this.registerInDiscovery(callback);
+    this.deregisterInDiscovery(callback);
   }
 
   // register with the discovery server

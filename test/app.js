@@ -2,6 +2,7 @@ const BitMonX = require('../src/index');
 const express = require('express');
 const Logger = require('../src/logger');
 
+/* eslint-disable no-console */
 const app = express();
 // initBitMonX(app);
 
@@ -20,11 +21,18 @@ bitmonx.on('registered', (serviceId, instanceId) => {
   console.log(
     'registered, service ID: ' + serviceId + ', instance ID: ' + instanceId,
   );
+
+  console.log('start to deregister in 15 seconds');
+  setTimeout(() => {
+    bitmonx.stop(() => {
+      console.log("deregistered, let's wait for 15 seconds to register again");
+    });
+  }, 15000);
 });
 
 bitmonx.on('registryFetched', (data) => {
   console.log('registry fetched');
-  console.log(bitmonx.getInstanceByInstanceName('test-service-1'));
+  // console.log(bitmonx.getInstanceByInstanceName('test-service-1'));
 });
 
 app.get('/api/v1/products', (req, res) => {
@@ -52,3 +60,5 @@ function randomStringGen() {
 app.listen(8088, () => {
   console.log('Server is running on port 8088');
 });
+
+/* eslint-enable no-console */

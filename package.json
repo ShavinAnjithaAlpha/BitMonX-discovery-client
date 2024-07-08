@@ -1,6 +1,6 @@
 {
   "name": "bitmonx-discovery-client",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Client Library for BitMonX Disocvery Server",
   "main": "src/index.js",
   "repository": {
